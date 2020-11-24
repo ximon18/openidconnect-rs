@@ -1074,6 +1074,20 @@ pub(crate) mod helpers {
 
     use super::{LanguageTag, Seconds};
 
+    pub fn deserialize_string_or_none<'de, T, D>(
+        deserializer: D,
+    ) -> Result<Option<T>, D::Error>
+    where
+        T: DeserializeOwned,
+        D: Deserializer<'de>,
+    {
+        let value: Value = Deserialize::deserialize(deserializer)?;
+        match from_value::<T>(value.clone()) {
+            Ok(val) => Ok(Some(val)),
+            Err(_) => Ok(None)
+        }
+    }
+
     pub fn deserialize_string_or_vec<'de, T, D>(deserializer: D) -> Result<Vec<T>, D::Error>
     where
         T: DeserializeOwned,

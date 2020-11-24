@@ -9,7 +9,7 @@ use serde::Serialize;
 use crate::helpers::FilteredFlatten;
 use crate::jwt::JsonWebTokenAccess;
 use crate::jwt::{JsonWebTokenError, JsonWebTokenJsonPayloadSerde};
-use crate::types::helpers::{deserialize_string_or_vec, serde_utc_seconds, serde_utc_seconds_opt};
+use crate::types::helpers::{deserialize_string_or_vec, deserialize_string_or_none, serde_utc_seconds, serde_utc_seconds_opt};
 use crate::types::LocalizedClaim;
 use crate::{
     AccessToken, AccessTokenHash, AdditionalClaims, AddressClaim, Audience, AudiencesClaim,
@@ -192,7 +192,11 @@ where
     auth_time: Option<DateTime<Utc>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     nonce: Option<Nonce>,
-    #[serde(rename = "acr", skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "acr",
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "deserialize_string_or_none"
+    )]
     auth_context_ref: Option<AuthenticationContextClass>,
     #[serde(rename = "amr", skip_serializing_if = "Option::is_none")]
     auth_method_refs: Option<Vec<AuthenticationMethodReference>>,
